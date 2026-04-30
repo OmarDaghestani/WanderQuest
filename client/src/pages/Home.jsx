@@ -44,8 +44,11 @@ export default function Home() {
                 </span>
               </h1>
               <p className="mt-3 max-w-md mx-auto text-base text-gray-700 dark:text-gray-200 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                Plan your perfect trip with ease. Create detailed itineraries,
-                track expenses, and discover new destinations all in one place.
+                Build complete itineraries in minutes, keep every day organized,
+                and stay on top of your travel budget from one clean workspace.
+              </p>
+              <p className="mt-3 max-w-2xl mx-auto text-sm text-gray-500 dark:text-gray-400">
+                No clutter, just the details you need to plan confidently.
               </p>
 
               {/* CTA Buttons */}
@@ -69,6 +72,9 @@ export default function Home() {
                     </Link>
                   </>
                 )}
+              </div>
+              <div className="mt-6 inline-flex rounded-full bg-primary-50 px-4 py-2 text-xs font-medium text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
+                Weekly challenge: complete one itinerary to unlock your Explorer badge.
               </div>
             </div>
 

@@ -6,6 +6,8 @@ export default function ImageWithFallback({
   alt,
   className,
   placeholderText,
+  loading = "lazy",
+  decoding = "async",
   ...props
 }) {
   const [error, setError] = useState(false);
@@ -35,9 +37,11 @@ export default function ImageWithFallback({
   return (
     <img
       src={error ? fallbackSrc : src}
-      alt={alt}
+      alt={alt || placeholderText || "Image"}
       className={className}
       onError={handleError}
+      loading={loading}
+      decoding={decoding}
       {...props}
     />
   );

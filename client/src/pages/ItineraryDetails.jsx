@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { itineraryService } from "../services";
 import { weatherService } from "../services/weather.service";
 import { placesService } from "../services/places.service";
-import { Button, Card } from "../components/common";
+import { Button, ImageWithFallback, Spinner } from "../components/common";
 import Layout from "../components/layout/Layout";
 
 export default function ItineraryDetails() {
@@ -28,9 +28,10 @@ export default function ItineraryDetails() {
       setEditedItinerary(data);
 
       if (data.location) {
-        const weatherResponse = await weatherService.getWeatherForLocation(
-          data.location
-        );
+        const [weatherResponse, placesResponse] = await Promise.all([
+          weatherService.getWeatherForLocation(data.location),
+          placesService.searchPlaces(data.location, "tourist attractions"),
+        ]);
         setWeatherData({
           ...weatherResponse,
           list: weatherResponse.list
@@ -40,11 +41,6 @@ export default function ItineraryDetails() {
             })
             .slice(0, 5),
         });
-
-        const placesResponse = await placesService.searchPlaces(
-          data.location,
-          "tourist attractions"
-        );
         setPlacesData(placesResponse.results.slice(0, 5));
       }
     } catch (err) {
@@ -139,12 +135,28 @@ export default function ItineraryDetails() {
     });
   };
 
+  const completionScore = itinerary
+    ? Math.round(
+        (
+          [
+            Boolean(itinerary.title),
+            Boolean(itinerary.location),
+            Boolean(itinerary.startDate && itinerary.endDate),
+            Boolean(itinerary.budget),
+            Boolean(itinerary.activities?.length),
+          ].filter(Boolean).length /
+          5
+        ) * 100
+      )
+    : 0;
+
   if (loading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-pulse text-gray-500">
-            Loading itinerary details...
+          <div className="flex items-center gap-3 text-gray-500">
+            <Spinner size="lg" />
+            <span>Loading itinerary details...</span>
           </div>
         </div>
       </Layout>
@@ -212,10 +224,14 @@ export default function ItineraryDetails() {
             {isEditing ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="edit-title"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Title
                   </label>
                   <input
+                    id="edit-title"
                     type="text"
                     name="title"
                     value={editedItinerary.title}
@@ -225,10 +241,14 @@ export default function ItineraryDetails() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label
+                      htmlFor="edit-start-date"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       Start Date
                     </label>
                     <input
+                      id="edit-start-date"
                       type="date"
                       name="startDate"
                       value={editedItinerary.startDate.split("T")[0]}
@@ -237,10 +257,14 @@ export default function ItineraryDetails() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label
+                      htmlFor="edit-end-date"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       End Date
                     </label>
                     <input
+                      id="edit-end-date"
                       type="date"
                       name="endDate"
                       value={editedItinerary.endDate.split("T")[0]}
@@ -251,10 +275,14 @@ export default function ItineraryDetails() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label
+                      htmlFor="edit-location"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       Location
                     </label>
                     <input
+                      id="edit-location"
                       type="text"
                       name="location"
                       value={editedItinerary.location}
@@ -263,10 +291,14 @@ export default function ItineraryDetails() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label
+                      htmlFor="edit-budget"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       Budget
                     </label>
                     <input
+                      id="edit-budget"
                       type="number"
                       name="budget"
                       value={editedItinerary.budget}
@@ -337,6 +369,14 @@ export default function ItineraryDetails() {
                     </svg>
                     Budget: ${parseFloat(itinerary.budget).toLocaleString()}
                   </div>
+                </div>
+                <div className="mt-4 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 dark:border-primary-800 dark:bg-primary-900/30">
+                  <p className="text-sm font-medium text-primary-800 dark:text-primary-200">
+                    Completion score: {completionScore}%
+                  </p>
+                  <p className="mt-1 text-xs text-primary-700 dark:text-primary-300">
+                    Keep this itinerary complete to maintain your Explorer streak.
+                  </p>
                 </div>
               </>
             )}
@@ -499,14 +539,13 @@ export default function ItineraryDetails() {
           )}
 
           {/* Places Section */}
-          {itinerary.placesWithPhotos &&
-            itinerary.placesWithPhotos.length > 0 && (
+          {(itinerary.placesWithPhotos || placesData?.length > 0) && (
               <div className="p-6 border-t border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Popular Places Nearby
                 </h2>
                 <div className="grid gap-6">
-                  {itinerary.placesWithPhotos.map((place, index) => (
+                  {(itinerary.placesWithPhotos || placesData || []).map((place, index) => (
                     <div
                       key={index}
                       className="bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden shadow-md"
@@ -516,23 +555,13 @@ export default function ItineraryDetails() {
                           {place.photos && place.photos.length > 0 ? (
                             <div className="flex">
                               {place.photos.map((photo, photoIndex) => (
-                                <img
+                                <ImageWithFallback
                                   key={photoIndex}
                                   src={photo.url}
+                                  fallbackSrc={photo.fallback_url}
                                   alt={`${place.name} photo ${photoIndex + 1}`}
                                   className="h-48 w-auto object-cover flex-shrink-0"
-                                  onError={(e) => {
-                                    if (
-                                      photo.fallback_url &&
-                                      e.target.src !== photo.fallback_url
-                                    ) {
-                                      e.target.src = photo.fallback_url;
-                                    } else {
-                                      e.target.src = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
-                                        place.name
-                                      )}`;
-                                    }
-                                  }}
+                                  placeholderText={place.name}
                                 />
                               ))}
                             </div>

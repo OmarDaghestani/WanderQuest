@@ -75,12 +75,16 @@ export default function Register() {
                 Create Account
               </h2>
               <p className="mt-3 text-base text-gray-700 dark:text-gray-300">
-                Join us to start planning your trips
+                Join WanderQuest and start building your next adventure.
               </p>
             </div>
 
             {errors.form && (
-              <div className="mb-8 text-error-600 text-sm rounded-lg bg-error-50 p-5 border border-error-200">
+              <div
+                id="register-form-error"
+                role="alert"
+                className="mb-8 text-error-600 text-sm rounded-lg bg-error-50 p-5 border border-error-200"
+              >
                 {errors.form}
               </div>
             )}
@@ -88,13 +92,19 @@ export default function Register() {
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <label
+                    htmlFor="register-email"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
                     Email address
                   </label>
                   <input
+                    id="register-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "register-email-error" : undefined}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
                       bg-white dark:bg-gray-700 
                       text-gray-900 dark:text-white
@@ -105,21 +115,32 @@ export default function Register() {
                     required
                   />
                   {errors.email && (
-                    <p className="mt-2 text-sm text-error-600">
+                    <p id="register-email-error" className="mt-2 text-sm text-error-600">
                       {errors.email}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <label
+                    htmlFor="register-password"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
                     Password
                   </label>
                   <div className="relative">
                     <input
+                      id="register-password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      aria-invalid={Boolean(errors.password)}
+                      aria-describedby={[
+                        errors.password ? "register-password-error" : "",
+                        "register-password-hint",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                       className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
                         bg-white dark:bg-gray-700 
                         text-gray-900 dark:text-white
@@ -131,30 +152,42 @@ export default function Register() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="mt-2 text-sm text-error-600">
+                    <p id="register-password-error" className="mt-2 text-sm text-error-600">
                       {errors.password}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p
+                    id="register-password-hint"
+                    className="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                  >
                     {getPasswordRequirements()}
                   </p>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <label
+                    htmlFor="register-confirm-password"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
                     Confirm Password
                   </label>
                   <div className="relative">
                     <input
+                      id="register-confirm-password"
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
+                      aria-invalid={Boolean(errors.confirmPassword)}
+                      aria-describedby={
+                        errors.confirmPassword ? "register-confirm-password-error" : undefined
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
                         bg-white dark:bg-gray-700 
                         text-gray-900 dark:text-white
@@ -168,13 +201,19 @@ export default function Register() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
+                      aria-label={
+                        showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+                      }
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       {showConfirmPassword ? "Hide" : "Show"}
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="mt-2 text-sm text-error-600">
+                    <p
+                      id="register-confirm-password-error"
+                      className="mt-2 text-sm text-error-600"
+                    >
                       {errors.confirmPassword}
                     </p>
                   )}
@@ -188,7 +227,7 @@ export default function Register() {
                   className="w-full text-lg py-3"
                   isLoading={isLoading}
                 >
-                  Create Account
+                  {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
               </div>
             </form>

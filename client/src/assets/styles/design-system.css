@@ -49,16 +49,17 @@
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700;
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
   }
 
   .form-input {
-    @apply block w-full rounded-md border-gray-300 shadow-sm
-    focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+    @apply block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm
+    focus:border-primary-500 focus:ring-primary-500 sm:text-sm
+    dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400;
   }
 
   .form-error {
-    @apply mt-1 text-sm text-error-500;
+    @apply mt-1 text-sm text-error-500 dark:text-error-400;
   }
 
   /* Cards */

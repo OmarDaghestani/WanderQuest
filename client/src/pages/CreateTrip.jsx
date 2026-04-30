@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { itineraryService } from "../services";
-import { Button, Input, Card } from "../components/common";
+import { Button, Input, Spinner } from "../components/common";
 import Layout from "../components/layout/Layout";
-import api from "../lib/api";
 
 const INITIAL_FORM_STATE = {
   title: "",
@@ -26,6 +25,16 @@ export default function CreateTrip() {
   const [currentActivity, setCurrentActivity] = useState(INITIAL_ACTIVITY);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const completionSteps = [
+    Boolean(formData.title.trim()),
+    Boolean(formData.location.trim()),
+    Boolean(formData.startDate && formData.endDate),
+    Boolean(formData.budget),
+  ];
+  const completionPercent = Math.round(
+    (completionSteps.filter(Boolean).length / completionSteps.length) * 100
+  );
 
   const validate = () => {
     const newErrors = {};
@@ -149,6 +158,30 @@ export default function CreateTrip() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-12">
+              <div
+                className="rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 dark:border-primary-800 dark:bg-primary-900/30"
+                aria-live="polite"
+              >
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-medium text-primary-800 dark:text-primary-200">
+                    Trip setup progress
+                  </span>
+                  <span className="text-primary-700 dark:text-primary-300">
+                    {completionPercent}%
+                  </span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-primary-100 dark:bg-primary-950">
+                  <div
+                    className="h-2 rounded-full bg-primary-600 transition-all"
+                    style={{ width: `${completionPercent}%` }}
+                  />
+                </div>
+                {completionPercent === 100 && (
+                  <p className="mt-2 text-xs font-medium text-success-700 dark:text-success-300">
+                    Nice! You unlocked the Planner badge.
+                  </p>
+                )}
+              </div>
               {/* Basic Information Section */}
               <div className="space-y-8">
                 <div className="flex items-center gap-4 mb-6">
@@ -179,114 +212,66 @@ export default function CreateTrip() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Trip Title
-                    </label>
-                    <input
+                    <Input
+                      id="trip-title"
+                      label="Trip Title"
                       type="text"
                       name="title"
                       value={formData.title}
                       onChange={handleChange}
                       placeholder="e.g., Summer in Paris"
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-gray-900 dark:text-white 
-                        placeholder-gray-400 dark:placeholder-gray-500
-                        focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
+                      error={errors.title}
                     />
-                    {errors.title && (
-                      <p className="mt-2 text-sm text-error-600">
-                        {errors.title}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Budget ($)
-                    </label>
-                    <input
+                    <Input
+                      id="trip-budget"
+                      label="Budget ($)"
                       type="number"
                       name="budget"
                       value={formData.budget}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-gray-900 dark:text-white 
-                        placeholder-gray-400 dark:placeholder-gray-500
-                        focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
+                      error={errors.budget}
                     />
-                    {errors.budget && (
-                      <p className="mt-2 text-sm text-error-600">
-                        {errors.budget}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Start Date
-                    </label>
-                    <input
+                    <Input
+                      id="trip-start-date"
+                      label="Start Date"
                       type="date"
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-gray-900 dark:text-white 
-                        focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
+                      error={errors.startDate}
                     />
-                    {errors.startDate && (
-                      <p className="mt-2 text-sm text-error-600">
-                        {errors.startDate}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      End Date
-                    </label>
-                    <input
+                    <Input
+                      id="trip-end-date"
+                      label="End Date"
                       type="date"
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-gray-900 dark:text-white 
-                        focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
+                      error={errors.endDate}
                     />
-                    {errors.endDate && (
-                      <p className="mt-2 text-sm text-error-600">
-                        {errors.endDate}
-                      </p>
-                    )}
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Location
-                    </label>
-                    <input
+                    <Input
+                      id="trip-location"
+                      label="Location"
                       type="text"
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
                       placeholder="e.g., Paris, France"
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-gray-900 dark:text-white 
-                        placeholder-gray-400 dark:placeholder-gray-500
-                        focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
+                      error={errors.location}
                     />
-                    {errors.location && (
-                      <p className="mt-2 text-sm text-error-600">
-                        {errors.location}
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
@@ -321,6 +306,7 @@ export default function CreateTrip() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <input
+                    id="activity-day"
                     type="number"
                     name="day"
                     value={currentActivity.day}
@@ -334,6 +320,7 @@ export default function CreateTrip() {
                     min="1"
                   />
                   <input
+                    id="activity-name"
                     type="text"
                     name="name"
                     value={currentActivity.name}
@@ -346,6 +333,7 @@ export default function CreateTrip() {
                       focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400"
                   />
                   <input
+                    id="activity-time"
                     type="time"
                     name="time"
                     value={currentActivity.time}
@@ -458,7 +446,14 @@ export default function CreateTrip() {
                     transition-colors duration-200"
                   disabled={isLoading}
                 >
-                  Create Trip
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <Spinner size="sm" className="text-white" />
+                      Saving...
+                    </span>
+                  ) : (
+                    "Create Trip"
+                  )}
                 </button>
               </div>
             </form>
