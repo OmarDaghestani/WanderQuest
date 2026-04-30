@@ -14,6 +14,7 @@ export default function Login() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const emailErrorId = error ? "login-form-error" : undefined;
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -56,13 +57,15 @@ export default function Login() {
                 Welcome Back
               </h2>
               <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
-                Sign in to continue your journey
+                Sign in to continue planning and tracking your trips.
               </p>
             </div>
 
             {/* Show error message if exists */}
             {error && (
               <div
+                id="login-form-error"
+                role="alert"
                 className="mb-6 p-4 rounded-md bg-error-50 dark:bg-error-900/50 
                 border border-error-200 dark:border-error-800"
               >
@@ -74,13 +77,19 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="login-email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Email address
                 </label>
                 <input
+                  id="login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-describedby={emailErrorId}
+                  aria-invalid={Boolean(error)}
                   className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
                     bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
                     focus:ring-primary-500 text-lg py-3"
@@ -90,14 +99,20 @@ export default function Login() {
               </div>
 
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="login-password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Password
                 </label>
                 <div className="relative">
                   <input
+                    id="login-password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    aria-describedby={emailErrorId}
+                    aria-invalid={Boolean(error)}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
                       bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
                       focus:ring-primary-500 text-lg py-3 pr-10"
@@ -107,6 +122,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {showPassword ? "Hide" : "Show"}

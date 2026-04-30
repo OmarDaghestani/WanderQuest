@@ -1,13 +1,27 @@
+import { Suspense, lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/auth";
-import Home from "./pages/Home";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Itineraries from "./pages/Itineraries";
-import CreateTrip from "./pages/CreateTrip";
-import ItineraryDetails from "./pages/ItineraryDetails";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Spinner } from "./components/common";
+
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const Itineraries = lazy(() => import("./pages/Itineraries"));
+const CreateTrip = lazy(() => import("./pages/CreateTrip"));
+const ItineraryDetails = lazy(() => import("./pages/ItineraryDetails"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+
+const PageFallback = () => (
+  <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+      <Spinner size="lg" />
+      <span>Loading page...</span>
+    </div>
+  </div>
+);
 
 function App() {
   const router = createBrowserRouter(
@@ -23,6 +37,14 @@ function App() {
       {
         path: "/register",
         element: <Register />,
+      },
+      {
+        path: "/terms",
+        element: <Terms />,
+      },
+      {
+        path: "/privacy",
+        element: <Privacy />,
       },
       {
         path: "/itineraries",
@@ -42,7 +64,11 @@ function App() {
       },
       {
         path: "/itineraries/:id",
-        element: <ItineraryDetails />,
+        element: (
+          <ProtectedRoute>
+            <ItineraryDetails />
+          </ProtectedRoute>
+        ),
       },
     ],
     {
@@ -56,7 +82,9 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <Suspense fallback={<PageFallback />}>
+          <RouterProvider router={router} />
+        </Suspense>
       </AuthProvider>
     </ThemeProvider>
   );
