@@ -219,7 +219,7 @@ export default function ItineraryDetails() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div className="card">
           <div className="p-6 bg-gradient-to-r from-primary-100/50 dark:from-primary-900/20 to-primary-50/50 dark:to-primary-900/10">
             {isEditing ? (
               <div className="space-y-4">
@@ -399,7 +399,7 @@ export default function ItineraryDetails() {
                 (activity, index) => (
                   <div
                     key={index}
-                    className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg"
+                    className="card-subtle p-4"
                   >
                     {isEditing ? (
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -512,7 +512,7 @@ export default function ItineraryDetails() {
                 {weatherData.list.map((day, index) => (
                   <div
                     key={index}
-                    className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg text-center"
+                    className="card-subtle p-4 text-center"
                   >
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {index === 0
@@ -548,7 +548,7 @@ export default function ItineraryDetails() {
                   {(itinerary.placesWithPhotos || placesData || []).map((place, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden shadow-md"
+                      className="card-subtle overflow-hidden"
                     >
                       <div className="flex flex-col md:flex-row">
                         <div className="md:w-1/3 flex overflow-x-auto">

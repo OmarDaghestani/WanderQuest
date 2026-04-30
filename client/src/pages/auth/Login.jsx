@@ -50,7 +50,7 @@ export default function Login() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl">
+        <div className="card">
           <div className="px-8 py-10 sm:p-12">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
@@ -91,7 +91,7 @@ export default function Login() {
                   aria-describedby={emailErrorId}
                   aria-invalid={Boolean(error)}
                   className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                    bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
+                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 
                     focus:ring-primary-500 text-lg py-3"
                   autoComplete="email"
                   required
@@ -114,7 +114,7 @@ export default function Login() {
                     aria-describedby={emailErrorId}
                     aria-invalid={Boolean(error)}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                      bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
+                      bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 
                       focus:ring-primary-500 text-lg py-3 pr-10"
                     autoComplete="current-password"
                     required

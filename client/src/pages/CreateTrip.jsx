@@ -139,7 +139,7 @@ export default function CreateTrip() {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
+        <div className="card">
           <div className="px-8 py-10 sm:p-12">
             {/* Header Section */}
             <div className="text-center mb-12">
@@ -383,7 +383,7 @@ export default function CreateTrip() {
                     {formData.activities.map((activity, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between bg-gray-50 p-5 rounded-lg border border-gray-200"
+                        className="card-subtle flex items-center justify-between p-5"
                       >
                         <div className="flex items-center space-x-4">
                           <span className="flex-shrink-0 h-10 w-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-lg font-medium">
