@@ -188,7 +188,7 @@ export default function Itineraries() {
               <Link
                 key={trip.id}
                 to={`/itineraries/${trip.id}`}
-                className="block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group"
+                className="card card-interactive block group"
               >
                 {trip.placesWithPhotos && trip.placesWithPhotos.length > 0 && (
                   <div className="h-40 w-full overflow-hidden relative">

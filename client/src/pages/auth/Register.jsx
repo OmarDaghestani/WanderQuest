@@ -68,13 +68,13 @@ export default function Register() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl">
+        <div className="card">
           <div className="px-8 py-10 sm:p-12">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
                 Create Account
               </h2>
-              <p className="mt-3 text-base text-gray-700 dark:text-gray-300">
+              <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
                 Join WanderQuest and start building your next adventure.
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function Register() {
               <div
                 id="register-form-error"
                 role="alert"
-                className="mb-8 text-error-600 text-sm rounded-lg bg-error-50 p-5 border border-error-200"
+                className="mb-8 text-error-600 dark:text-error-400 text-sm rounded-lg bg-error-50 dark:bg-error-900/50 p-5 border border-error-200 dark:border-error-800"
               >
                 {errors.form}
               </div>
@@ -94,7 +94,7 @@ export default function Register() {
                 <div className="space-y-4">
                   <label
                     htmlFor="register-email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Email address
                   </label>
@@ -106,7 +106,7 @@ export default function Register() {
                     aria-invalid={Boolean(errors.email)}
                     aria-describedby={errors.email ? "register-email-error" : undefined}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                      bg-white dark:bg-gray-700 
+                      bg-white dark:bg-gray-800 
                       text-gray-900 dark:text-white
                       shadow-sm focus:border-primary-500 focus:ring-primary-500 
                       text-lg py-3"
@@ -124,7 +124,7 @@ export default function Register() {
                 <div className="space-y-4">
                   <label
                     htmlFor="register-password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Password
                   </label>
@@ -142,7 +142,7 @@ export default function Register() {
                         .filter(Boolean)
                         .join(" ")}
                       className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
+                        bg-white dark:bg-gray-800 
                         text-gray-900 dark:text-white
                         shadow-sm focus:border-primary-500 focus:ring-primary-500 
                         text-lg py-3 pr-10"
@@ -174,7 +174,7 @@ export default function Register() {
                 <div className="space-y-4">
                   <label
                     htmlFor="register-confirm-password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Confirm Password
                   </label>
@@ -189,7 +189,7 @@ export default function Register() {
                         errors.confirmPassword ? "register-confirm-password-error" : undefined
                       }
                       className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
+                        bg-white dark:bg-gray-800 
                         text-gray-900 dark:text-white
                         shadow-sm focus:border-primary-500 focus:ring-primary-500 
                         text-lg py-3 pr-10"

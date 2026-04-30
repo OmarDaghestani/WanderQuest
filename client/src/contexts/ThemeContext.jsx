@@ -9,6 +9,8 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
+    document.documentElement.classList.add("theme-transition");
+
     if (darkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
@@ -16,6 +18,12 @@ export function ThemeProvider({ children }) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
+
+    const timer = window.setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 250);
+
+    return () => window.clearTimeout(timer);
   }, [darkMode]);
 
   const toggleTheme = () => setDarkMode(!darkMode);

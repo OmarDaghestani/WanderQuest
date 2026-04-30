@@ -32,7 +32,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <main className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+      <main className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300 ease-in-out">
         <div className="flex-grow">
           {/* Hero Section */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -84,19 +84,18 @@ export default function Home() {
                 {features.map((feature) => (
                   <div
                     key={feature.name}
-                    className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset 
-                  focus-within:ring-primary-500 rounded-lg shadow-soft hover:shadow-md transition-shadow"
+                    className="card card-interactive relative p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500"
                   >
                     <div>
-                      <span className="rounded-lg inline-flex p-3 bg-primary-50 text-primary-700 ring-4 ring-white">
+                      <span className="rounded-lg inline-flex p-3 bg-primary-50 text-primary-700 ring-4 ring-white dark:bg-primary-900/30 dark:text-primary-300 dark:ring-gray-800">
                         <feature.icon className="h-6 w-6" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="mt-8">
-                      <h3 className="text-lg font-medium text-gray-900">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                         {feature.name}
                       </h3>
-                      <p className="mt-2 text-sm text-gray-500">
+                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         {feature.description}
                       </p>
                     </div>
