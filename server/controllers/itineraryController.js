@@ -13,7 +13,11 @@ const pickEditable = (body) =>
   );
 
 // Photos are served through our own proxy so the Google API key never reaches the browser
-const photoProxyBase = (req) => `${req.protocol}://${req.get("host")}/api/places/photos`;
+// Production is always served over HTTPS, even if nginx doesn't forward X-Forwarded-Proto.
+const photoProxyBase = (req) => {
+  const protocol = process.env.NODE_ENV === "production" ? "https" : req.protocol;
+  return `${protocol}://${req.get("host")}/api/places/photos`;
+};
 
 // Helper function to fetch place images for a location
 const fetchPlaceImagesForLocation = async (location, photoBaseUrl) => {
