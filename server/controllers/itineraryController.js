@@ -1,8 +1,22 @@
 const { Itinerary } = require("../models");
 const axios = require("axios");
 
+// Fields a user may set on create/update; userId, id, and timestamps are never client-controlled
+const EDITABLE_FIELDS = ["title", "startDate", "endDate", "budget", "location", "activities"];
+
+const pickEditable = (body) =>
+  Object.fromEntries(
+    EDITABLE_FIELDS.filter((field) => body[field] !== undefined).map((field) => [
+      field,
+      body[field],
+    ])
+  );
+
+// Photos are served through our own proxy so the Google API key never reaches the browser
+const photoProxyBase = (req) => `${req.protocol}://${req.get("host")}/api/places/photos`;
+
 // Helper function to fetch place images for a location
-const fetchPlaceImagesForLocation = async (location) => {
+const fetchPlaceImagesForLocation = async (location, photoBaseUrl) => {
   if (!location) return [];
 
   try {
@@ -34,8 +48,8 @@ const fetchPlaceImagesForLocation = async (location) => {
       photos: place.photos
         ? place.photos.slice(0, 1).map((photo) => ({
             photo_reference: photo.photo_reference,
-            url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${process.env.GOOGLE_PLACES_API_KEY}`,
-            fallback_url: `https://via.placeholder.com/400x300?text=${encodeURIComponent(
+            url: `${photoBaseUrl}/${encodeURIComponent(photo.photo_reference)}`,
+            fallback_url: `https://placehold.co/400x300?text=${encodeURIComponent(
               place.name
             )}`,
           }))
@@ -60,7 +74,10 @@ const itineraryController = {
       // Fetch place images for the 5 most recent itineraries
       const itinerariesWithPlaces = await Promise.all(
         itineraries.slice(0, 5).map(async (itinerary) => {
-          const places = await fetchPlaceImagesForLocation(itinerary.location);
+          const places = await fetchPlaceImagesForLocation(
+            itinerary.location,
+            photoProxyBase(req)
+          );
           return {
             ...itinerary.toJSON(),
             placesWithPhotos: places,
@@ -76,15 +93,14 @@ const itineraryController = {
 
       res.json(result);
     } catch (error) {
-      console.error("Error getting itineraries:", error);
-      res.status(400).json({ error: error.message });
+      console.error("Error getting itineraries:", error.message);
+      res.status(500).json({ error: "Failed to load itineraries" });
     }
   },
 
   createItinerary: async (req, res) => {
     try {
       const { title, startDate, endDate, budget, location } = req.body;
-      console.log("Request body:", req.body);
 
       // Get current date and calculate days until start date
       const today = new Date();
@@ -96,8 +112,6 @@ const itineraryController = {
       let weatherData = [];
 
       try {
-        // Always fetch weather data for debugging
-        console.log("Fetching weather data from OpenWeather API...");
         const weatherResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast`,
           {
@@ -125,13 +139,8 @@ const itineraryController = {
           })),
         };
 
-        console.log("Final weather data:", weatherData);
       } catch (weatherError) {
         console.error("Error fetching weather data:", weatherError.message);
-        if (weatherError.response) {
-          console.error("API Response:", weatherError.response.data);
-          console.error("API Status:", weatherError.response.status);
-        }
       }
 
       // Create itinerary with weather data
@@ -148,11 +157,8 @@ const itineraryController = {
 
       res.status(201).json(itinerary);
     } catch (error) {
-      console.error("Error creating itinerary:", error);
-      res.status(400).json({
-        error: error.message,
-        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-      });
+      console.error("Error creating itinerary:", error.message);
+      res.status(400).json({ error: "Failed to create itinerary" });
     }
   },
 
@@ -166,10 +172,11 @@ const itineraryController = {
         return res.status(404).json({ error: "Itinerary not found" });
       }
 
-      await itinerary.update(req.body);
+      await itinerary.update(pickEditable(req.body));
       res.json(itinerary);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error("Error updating itinerary:", error.message);
+      res.status(400).json({ error: "Failed to update itinerary" });
     }
   },
 
@@ -186,7 +193,8 @@ const itineraryController = {
       await itinerary.destroy();
       res.json({ message: "Itinerary deleted" });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error("Error deleting itinerary:", error.message);
+      res.status(500).json({ error: "Failed to delete itinerary" });
     }
   },
 
@@ -204,7 +212,10 @@ const itineraryController = {
       }
 
       // Fetch place images
-      const places = await fetchPlaceImagesForLocation(itinerary.location);
+      const places = await fetchPlaceImagesForLocation(
+        itinerary.location,
+        photoProxyBase(req)
+      );
 
       const result = {
         ...itinerary.toJSON(),
@@ -213,8 +224,8 @@ const itineraryController = {
 
       res.json(result);
     } catch (error) {
-      console.error("Error in getItineraryById:", error);
-      res.status(400).json({ error: error.message });
+      console.error("Error in getItineraryById:", error.message);
+      res.status(500).json({ error: "Failed to load itinerary" });
     }
   },
 };
