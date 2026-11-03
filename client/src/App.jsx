@@ -13,6 +13,7 @@ const CreateTrip = lazy(() => import("./pages/CreateTrip"));
 const ItineraryDetails = lazy(() => import("./pages/ItineraryDetails"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Account = lazy(() => import("./pages/Account"));
 
 const PageFallback = () => (
   <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -67,6 +68,14 @@ function App() {
         element: (
           <ProtectedRoute>
             <ItineraryDetails />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/account",
+        element: (
+          <ProtectedRoute>
+            <Account />
           </ProtectedRoute>
         ),
       },

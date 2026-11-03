@@ -59,6 +59,49 @@ const authController = {
     }
   },
 
+  updateProfile: async (req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await User.findByPk(req.user.id);
+
+      if (email !== user.email) {
+        const taken = await User.findOne({ where: { email } });
+        if (taken) {
+          return res.status(400).json({ error: "Email already in use" });
+        }
+        user.email = email;
+        await user.save();
+      }
+
+      res.json({ id: user.id, email: user.email, preferences: user.preferences });
+    } catch (error) {
+      console.error("Update profile error:", error.message);
+      if (error.name === "SequelizeUniqueConstraintError") {
+        return res.status(400).json({ error: "Email already in use" });
+      }
+      res.status(500).json({ error: "Server error" });
+    }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const user = await User.findByPk(req.user.id);
+
+      if (!(await user.validatePassword(currentPassword))) {
+        return res.status(400).json({ error: "Current password is incorrect" });
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+      await user.save();
+
+      res.json({ message: "Password updated" });
+    } catch (error) {
+      console.error("Change password error:", error.message);
+      res.status(500).json({ error: "Server error" });
+    }
+  },
+
   getProfile: async (req, res) => {
     try {
       const user = await User.findByPk(req.user.id, {
