@@ -67,6 +67,15 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   };
 
+  const updateProfile = async (profile) => {
+    const updatedUser = await authService.updateProfile(profile);
+    setUser((current) => ({ ...current, ...updatedUser }));
+    return updatedUser;
+  };
+
+  const changePassword = (currentPassword, newPassword) =>
+    authService.changePassword(currentPassword, newPassword);
+
   return (
     <AuthContext.Provider
       value={{
@@ -76,6 +85,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        updateProfile,
+        changePassword,
         isAuthenticated: !!user,
       }}
     >

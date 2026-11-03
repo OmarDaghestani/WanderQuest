@@ -68,6 +68,18 @@ export default function Navbar() {
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
+                            <Link
+                              to="/account"
+                              className={`${
+                                active ? "bg-gray-100 dark:bg-gray-600" : ""
+                              } block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200`}
+                            >
+                              Account settings
+                            </Link>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
                             <button
                               onClick={logout}
                               className={`${
@@ -131,6 +143,14 @@ export default function Navbar() {
                   )
               )}
               {user ? (
+                <>
+                <Disclosure.Button
+                  as={Link}
+                  to="/account"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
+                >
+                  Account settings
+                </Disclosure.Button>
                 <Disclosure.Button
                   as="button"
                   onClick={logout}
@@ -138,6 +158,7 @@ export default function Navbar() {
                 >
                   Sign out
                 </Disclosure.Button>
+                </>
               ) : (
                 <>
                   <Disclosure.Button

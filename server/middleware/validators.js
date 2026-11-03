@@ -39,6 +39,27 @@ const validators = {
       body("password").exists().withMessage("Password is required"),
       validate,
     ],
+    updateProfile: [
+      body("email")
+        .isEmail()
+        .normalizeEmail()
+        .withMessage("Must be a valid email address"),
+      validate,
+    ],
+    changePassword: [
+      body("currentPassword")
+        .isString()
+        .notEmpty()
+        .withMessage("Current password is required"),
+      body("newPassword")
+        .custom(validatePassword)
+        .withMessage(
+          "Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number"
+        )
+        .custom((value, { req }) => value !== req.body.currentPassword)
+        .withMessage("New password must be different from your current password"),
+      validate,
+    ],
   },
   itinerary: {
     id: [param("id").isUUID(4).withMessage("Invalid itinerary ID"), validate],
